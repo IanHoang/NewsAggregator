@@ -1,4 +1,4 @@
-#News Aggregator
+# News Aggregator
 
 ## Description
 
