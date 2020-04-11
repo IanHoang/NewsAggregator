@@ -29,7 +29,7 @@ public class TestIndexBuilder {
     }
 
     /**
-     * Test parseFeed() method in IndexBuilder()
+     * Test parseFeed() method in IndexBuilder
      */
     @Test
     public void testParseFeed(){
@@ -44,7 +44,7 @@ public class TestIndexBuilder {
     }
 
     /**
-     * Test buildeIndex() method in IndexBuilder()
+     * Test buildeIndex() method in IndexBuilder
      */
     @Test
     public void testBuildIndex(){
@@ -81,6 +81,24 @@ public class TestIndexBuilder {
         assertEquals(0.08947, forwardIndex.get(host+"page5.html").get("topics"), 0.001);
         assertEquals(0.0509, forwardIndex.get(host+"page5.html").get("files"), 0.001);
         assertEquals(0.0894, forwardIndex.get(host+"page5.html").get("completely"), 0.001);
+    }
+
+    /**
+     * Test buildInvertedIndex() method in IndexBuilder
+     */
+    @Test
+    public void testBuildInvertedIndex(){
+        Map<String, List<String>> docs = ib.parseFeed(feeds);
+        Map<String, Map<String, Double>> forwardIndex = ib.buildIndex(docs);
+        Map<?, ?> invertedIndex = ib.buildInvertedIndex(forwardIndex);
+
+        assertEquals(0.1021,  ((List<Map.Entry<String, Double>>)invertedIndex.get("data")).get(0).getValue() , 0.001);
+        assertEquals(0.0464,  ((List<Map.Entry<String, Double>>)invertedIndex.get("data")).get(1).getValue()  , 0.001);
+        assertEquals(0.0154,  ((List<Map.Entry<String, Double>>)invertedIndex.get("data")).get(2).getValue()  , 0.001);
+
+
+
+
     }
 
 }
