@@ -143,7 +143,40 @@ public class IndexBuilder implements IIndexBuilder{
 
     @Override
     public Collection<Map.Entry<String, List<String>>> buildHomePage(Map<?, ?> invertedIndex) {
-        return null;
+
+        // initialize homePage as TreeSet with Comparator
+        Collection<Map.Entry<String, List<String>>> homePage = new TreeSet<>(new Comparator<Map.Entry<String, List<String>>>() {
+            @Override
+            public int compare(Map.Entry<String, List<String>> o1, Map.Entry<String, List<String>> o2) {
+
+                // first sort by number of docs (descending order)
+                if ( ((Integer) o2.getValue().size()).compareTo((Integer) o1.getValue().size() ) != 0){
+                    return ((Integer) o2.getValue().size()).compareTo((Integer) o1.getValue().size()) ;
+                }
+                // if two term have the same number of docs, sort them by reversed alphabetical order
+                else {
+                    return o2.getKey().compareTo(o1.getKey());
+                }
+            }
+        });
+
+        // iterate through invertedIndex to construct homePage
+        List<String> temp;
+        for (String word: (Set<String>)invertedIndex.keySet()){
+
+            //skip store words
+            if (STOPWORDS.contains(word)) continue;
+
+            //else
+            temp = new ArrayList<>();
+            for(Map.Entry<String, Double> doc : (List<Map.Entry<String, Double>>) invertedIndex.get(word) ){
+                temp.add(doc.getKey());
+            }
+
+            homePage.add(new AbstractMap.SimpleEntry<String, List<String>>(word, temp));
+        }
+
+        return homePage;
     }
 
     @Override
