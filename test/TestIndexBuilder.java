@@ -111,6 +111,8 @@ public class TestIndexBuilder {
         String prevWord = null;
         for( Map.Entry<String, List<String>> e: homePage){
 
+            System.out.println(e.getKey()+" "+e.getValue().size());
+
             // check word not a STOP work
             assertTrue(!IIndexBuilder.STOPWORDS.contains(e.getKey()));
 
@@ -131,6 +133,25 @@ public class TestIndexBuilder {
                 prevWord = e.getKey();
             }
         }
+    }
+
+    /**
+     * Test searchArciles() in IndexBuilder
+     */
+    @Test
+    public void testSearchArticles(){
+        Map<String, List<String>> docs = ib.parseFeed(feeds);
+        Map<String, Map<String, Double>> forwardIndex = ib.buildIndex(docs);
+        Map<?, ?> invertedIndex = ib.buildInvertedIndex(forwardIndex);
+        List<String> articles = ib.searchArticles("data", invertedIndex);
+
+        assertEquals(3, ib.searchArticles("data", invertedIndex).size() );
+        assertEquals(2, ib.searchArticles("trees", invertedIndex).size() );
+        assertEquals(2, ib.searchArticles("order", invertedIndex).size() );
+        assertEquals(1, ib.searchArticles("working", invertedIndex).size() );
+        assertEquals(1, ib.searchArticles("use", invertedIndex).size() );
+//        assertEquals(0, ib.searchArticles("and", invertedIndex).size()); //unhandled yet
+
     }
 
 
