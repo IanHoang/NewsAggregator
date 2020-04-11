@@ -26,7 +26,13 @@ public class TestIndexBuilder {
     @Test
     public void testParseFeed(){
         Map<String, List<String>> docs = ib.parseFeed(feeds);
-        System.out.println(docs);
+        assertEquals(5, docs.size());
+        assertEquals(10, docs.get("http://localhost:8090/page1.html").size());
+        assertEquals(55, docs.get("http://localhost:8090/page2.html").size());
+        assertEquals(33, docs.get("http://localhost:8090/page3.html").size());
+        assertEquals(22, docs.get("http://localhost:8090/page4.html").size());
+        assertEquals(18, docs.get("http://localhost:8090/page5.html").size());
+
     }
 
 }
