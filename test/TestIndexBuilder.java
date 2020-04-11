@@ -148,7 +148,6 @@ public class TestIndexBuilder {
         assertEquals(2, ib.searchArticles("order", invertedIndex).size() );
         assertEquals(1, ib.searchArticles("working", invertedIndex).size() );
         assertEquals(1, ib.searchArticles("use", invertedIndex).size() );
-//        assertEquals(0, ib.searchArticles("and", invertedIndex).size()); //unhandled yet
 
     }
 

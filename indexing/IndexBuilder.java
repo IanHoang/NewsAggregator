@@ -45,7 +45,7 @@ public class IndexBuilder implements IIndexBuilder{
                     words = link.text().split(" ");
                     wordsList = new ArrayList<String>();
                     for(String word: words){
-                        String w = word.toLowerCase().replaceAll("[^a-z]", "").trim();
+                        String w = word.toLowerCase().replaceAll("[^a-z0-9]", "").trim();
                         if (w.length() != 0){
                             wordsList.add(w);
                         }
@@ -227,7 +227,6 @@ public class IndexBuilder implements IIndexBuilder{
 
         return docs;
     }
-
 
 }
 
