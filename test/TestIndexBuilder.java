@@ -1,15 +1,13 @@
 package test;
 
 import static org.junit.Assert.*;
-
 import indexing.IIndexBuilder;
 import indexing.IndexBuilder;
 import org.junit.Before;
 import org.junit.Test;
-
 import java.util.*;
 
-
+@SuppressWarnings("All")
 public class TestIndexBuilder {
 
     List<String> feeds;
@@ -119,7 +117,7 @@ public class TestIndexBuilder {
             if (prevSize == -1) prevSize = e.getValue().size();
             else{
                 // check sorted by number of articles
-                assertTrue(prevSize >= e.getValue().size());
+                assertTrue(prevSize <= e.getValue().size());
 
                 if(prevSize == e.getValue().size()){
                     if (prevWord == null) prevWord = e.getKey();
@@ -152,6 +150,20 @@ public class TestIndexBuilder {
         assertEquals(1, ib.searchArticles("use", invertedIndex).size() );
 //        assertEquals(0, ib.searchArticles("and", invertedIndex).size()); //unhandled yet
 
+    }
+
+    /**
+     * Test createAutocompleteFile() in IndexBuilder
+     */
+    @Test
+    public void testCreateAutoCompleteFile(){
+        Map<String, List<String>> docs = ib.parseFeed(feeds);
+        Map<String, Map<String, Double>> forwardIndex = ib.buildIndex(docs);
+        Map<?, ?> invertedIndex = ib.buildInvertedIndex(forwardIndex);
+        Collection<Map.Entry<String, List<String>>> homePage = ib.buildHomePage(invertedIndex);
+        Collection<?> wordsWritten = ib.createAutocompleteFile(homePage);
+
+        assertEquals(wordsWritten.size(), homePage.size());
     }
 
 
