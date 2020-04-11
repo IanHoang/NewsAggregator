@@ -186,7 +186,14 @@ public class IndexBuilder implements IIndexBuilder{
 
     @Override
     public List<String> searchArticles(String queryTerm, Map<?, ?> invertedIndex) {
-        return null;
+
+        List<String> docs = new ArrayList<>();
+        List<Map.Entry<String, Double>> temp = (List<Map.Entry<String, Double>>) invertedIndex.get(queryTerm);
+        for (Map.Entry<String, Double> doc: temp){
+            docs.add(doc.getKey());
+        }
+
+        return docs;
     }
 
 
