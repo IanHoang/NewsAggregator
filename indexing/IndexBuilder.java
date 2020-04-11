@@ -5,9 +5,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+@SuppressWarnings("All")
 public class IndexBuilder implements IIndexBuilder{
 
     @Override
@@ -42,7 +45,10 @@ public class IndexBuilder implements IIndexBuilder{
                     words = link.text().split(" ");
                     wordsList = new ArrayList<String>();
                     for(String word: words){
-                        wordsList.add(word.toLowerCase().replaceAll("[^a-z]", "").trim());
+                        String w = word.toLowerCase().replaceAll("[^a-z]", "").trim();
+                        if (w.length() != 0){
+                            wordsList.add(w);
+                        }
                     }
                     docs.put(html, wordsList);
                 }
@@ -151,7 +157,7 @@ public class IndexBuilder implements IIndexBuilder{
 
                 // first sort by number of docs (descending order)
                 if ( ((Integer) o2.getValue().size()).compareTo((Integer) o1.getValue().size() ) != 0){
-                    return ((Integer) o2.getValue().size()).compareTo((Integer) o1.getValue().size()) ;
+                    return ((Integer) o1.getValue().size()).compareTo((Integer) o2.getValue().size()) ;
                 }
                 // if two term have the same number of docs, sort them by reversed alphabetical order
                 else {
@@ -181,7 +187,33 @@ public class IndexBuilder implements IIndexBuilder{
 
     @Override
     public Collection<?> createAutocompleteFile(Collection<Map.Entry<String, List<String>>> homepage) {
-        return null;
+
+        Set<String> wordsWritten = new TreeSet<String>(new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareTo(o2);
+            }
+        });
+
+        for(Map.Entry<String, List<String>> e: homepage){
+            wordsWritten.add(e.getKey());
+        }
+
+        try {
+            FileWriter writer = new FileWriter("autocomplete.txt");
+            BufferedWriter buffer = new BufferedWriter(writer);
+            buffer.write(""+wordsWritten.size()+"\n");
+            for(String word: wordsWritten){
+                buffer.write("0"+" "+word+"  \n");
+            }
+            buffer.close();
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return wordsWritten;
     }
 
     @Override
