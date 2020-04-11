@@ -40,7 +40,10 @@ public class IndexBuilder implements IIndexBuilder{
                 elements = doc.getElementsByTag("body");
                 for (Element link: elements){
                     words = link.text().split(" ");
-                    wordsList = new ArrayList<String>(Arrays.asList(words));
+                    wordsList = new ArrayList<String>();
+                    for(String word: words){
+                        wordsList.add(word.toLowerCase().replaceAll("[^a-z]", "").trim());
+                    }
                     docs.put(html, wordsList);
                 }
             } catch (IOException e) {
@@ -53,7 +56,55 @@ public class IndexBuilder implements IIndexBuilder{
 
     @Override
     public Map<String, Map<String, Double>> buildIndex(Map<String, List<String>> docs) {
-        return null;
+
+        int n = docs.size(); //number of documents
+        Map<String, Integer> countDocWithWord = new HashMap<>(); //number of documents with term
+
+        //create mapping of doc: (word:count)
+        Map<String, Integer> countWordsPerDoc; //number of times a term appears in a doc
+        Map<String, Map<String, Integer>> temp = new LinkedHashMap<>(); // doc : countWordsPerDoc
+        for (String doc: docs.keySet()){
+            List<String> words = docs.get(doc);
+            countWordsPerDoc = new TreeMap<>(new Comparator<String>() {
+                @Override
+                public int compare(String o1, String o2) {
+                    return o1.compareTo(o2);
+                }
+            });
+            for(String word: words){
+                if (countWordsPerDoc.containsKey(word)){
+                    countWordsPerDoc.put(word, countWordsPerDoc.get(word)+1);
+                } else {
+                    countWordsPerDoc.put(word, 1);
+                    countDocWithWord.put(word, countDocWithWord.getOrDefault(word, 0) +1);
+                }
+            }
+            temp.put(doc, countWordsPerDoc);
+        }
+
+        //create TF-IDF
+        Map<String, Map<String, Double>> forwardIndex = new LinkedHashMap<>();
+        Map<String, Double> TFIDF;
+        for (String doc: temp.keySet()){
+            TFIDF = new TreeMap<>(new Comparator<String>() {
+                @Override
+                public int compare(String o1, String o2) {
+                    return o1.compareTo(o2);
+                }
+            });
+            double TF;
+            double IDF;
+            for (String word: docs.get(doc)){
+               if (!TFIDF.containsKey(word)){
+                   TF = (double)temp.get(doc).get(word) / (double) docs.get(doc).size();
+                   IDF = Math.log( (double) n / (double) countDocWithWord.get(word)) ;
+                   TFIDF.put(word, TF*IDF);
+               }
+            }
+            forwardIndex.put(doc, TFIDF);
+        }
+
+        return forwardIndex;
     }
 
     @Override
@@ -76,3 +127,27 @@ public class IndexBuilder implements IIndexBuilder{
         return null;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
