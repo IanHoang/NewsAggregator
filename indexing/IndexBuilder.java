@@ -109,7 +109,36 @@ public class IndexBuilder implements IIndexBuilder{
 
     @Override
     public Map<?, ?> buildInvertedIndex(Map<String, Map<String, Double>> index) {
-        return null;
+
+        //  word  :  list of (doc, TFIDF)
+        Map<String, List<Map.Entry<String, Double>>> invertedIndex = new HashMap<>();
+
+        List<Map.Entry<String, Double>> temp;
+        for (String doc: index.keySet()){
+            for(String word: index.get(doc).keySet()){
+                if (!invertedIndex.containsKey(word)){
+                    temp = new ArrayList<>();
+                    temp.add(new AbstractMap.SimpleEntry<String, Double>(doc, index.get(doc).get(word)));
+                    invertedIndex.put(word, temp);
+                } else {
+                    temp = invertedIndex.get(word);
+                    temp.add(new AbstractMap.SimpleEntry<String, Double>(doc, index.get(doc).get(word)));
+                }
+            }
+        }
+
+        // sort by reverse tag term TFIDF value
+        for(String word: invertedIndex.keySet()){
+            temp = invertedIndex.get(word);
+            Collections.sort(temp, new Comparator<Map.Entry<String, Double>>() {
+                @Override
+                public int compare(Map.Entry<String, Double> o1, Map.Entry<String, Double> o2) {
+                    return o2.getValue().compareTo(o1.getValue());
+                }
+            });
+        }
+
+        return invertedIndex;
     }
 
     @Override
@@ -126,6 +155,8 @@ public class IndexBuilder implements IIndexBuilder{
     public List<String> searchArticles(String queryTerm, Map<?, ?> invertedIndex) {
         return null;
     }
+
+
 }
 
 
