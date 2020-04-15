@@ -212,13 +212,17 @@ public class NewsAggregatorGUI
             public void actionPerformed(ActionEvent e)
             {
                 Map<String, List<Entry<String, Double>>> articles =
-                    (Map<String, List<Entry<String, Double>>>)invIdx; 
-                NavigableSet<Entry<String, List<String>>> home = (NavigableSet<Entry<String, List<String>>>)idxBuilder.buildHomePage(invIdx);
-                if(home.size() > 0) {
+                    (Map<String, List<Entry<String, Double>>>)invIdx;
+                Collection<Entry<String, List<String>>> home =
+                    (Collection<Entry<String, List<String>>>)idxBuilder
+                        .buildHomePage(invIdx);
+                if (home.size() > 0)
+                {
                     articlesList.clear();
                 }
-                Iterator<Entry<String, List<String>>> iter = home.descendingIterator();
-                while(iter.hasNext()) {
+                Iterator<Entry<String, List<String>>> iter = home.iterator();
+                while (iter.hasNext())
+                {
                     Entry<String, List<String>> entry = iter.next();
                     articlesList.addElement(entry.getKey());
                     for (String url : entry.getValue())
@@ -233,8 +237,9 @@ public class NewsAggregatorGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                idxBuilder.createAutocompleteFile(idxBuilder.buildHomePage(invIdx));
-                searchBox = new AutocompletePanel("autocomplete.txt");               
+                idxBuilder
+                    .createAutocompleteFile(idxBuilder.buildHomePage(invIdx));
+                searchBox = new AutocompletePanel("autocomplete.txt");
             }
 
         });
@@ -245,7 +250,7 @@ public class NewsAggregatorGUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-               
+
                 String query = searchBox.getSearchText();
                 if (query.length() > 0)
                 {
@@ -262,12 +267,14 @@ public class NewsAggregatorGUI
                 }
             }
         });
-        
-        //clickable results
+
+        // clickable results
         results.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent evt) {
+            public void mouseClicked(MouseEvent evt)
+            {
                 JList list = (JList)evt.getSource();
-                if (evt.getClickCount() == 1) {
+                if (evt.getClickCount() == 1)
+                {
 
                     // index of the article
                     int index = list.locationToIndex(evt.getPoint());
@@ -276,7 +283,8 @@ public class NewsAggregatorGUI
                     try
                     {
                         URI uri = new URI(url.trim());
-                        Desktop.getDesktop().browse(uri);
+                        if (url.contains("http://"))
+                            Desktop.getDesktop().browse(uri);
                     }
                     catch (UnsupportedEncodingException e)
                     {
@@ -293,8 +301,8 @@ public class NewsAggregatorGUI
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    
-                } 
+
+                }
             }
         });
 
