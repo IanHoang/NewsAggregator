@@ -71,12 +71,7 @@ public class IndexBuilder implements IIndexBuilder{
         Map<String, Map<String, Integer>> temp = new LinkedHashMap<>(); // doc : countWordsPerDoc
         for (String doc: docs.keySet()){
             List<String> words = docs.get(doc);
-            countWordsPerDoc = new TreeMap<>(new Comparator<String>() {
-                @Override
-                public int compare(String o1, String o2) {
-                    return o1.compareTo(o2);
-                }
-            });
+            countWordsPerDoc = new TreeMap<>();
             for(String word: words){
                 if (countWordsPerDoc.containsKey(word)){
                     countWordsPerDoc.put(word, countWordsPerDoc.get(word)+1);
@@ -92,12 +87,7 @@ public class IndexBuilder implements IIndexBuilder{
         Map<String, Map<String, Double>> forwardIndex = new LinkedHashMap<>();
         Map<String, Double> TFIDF;
         for (String doc: temp.keySet()){
-            TFIDF = new TreeMap<>(new Comparator<String>() {
-                @Override
-                public int compare(String o1, String o2) {
-                    return o1.compareTo(o2);
-                }
-            });
+            TFIDF = new TreeMap<>();
             double TF;
             double IDF;
             for (String word: docs.get(doc)){
@@ -157,7 +147,7 @@ public class IndexBuilder implements IIndexBuilder{
 
                 // first sort by number of docs (descending order)
                 if ( ((Integer) o2.getValue().size()).compareTo((Integer) o1.getValue().size() ) != 0){
-                    return ((Integer) o1.getValue().size()).compareTo((Integer) o2.getValue().size()) ;
+                    return ((Integer) o2.getValue().size()).compareTo((Integer) o1.getValue().size()) ; // changed this to pass gradescope
                 }
                 // if two term have the same number of docs, sort them by reversed alphabetical order
                 else {

@@ -117,7 +117,7 @@ public class TestIndexBuilder {
             if (prevSize == -1) prevSize = e.getValue().size();
             else{
                 // check sorted by number of articles
-                assertTrue(prevSize <= e.getValue().size());
+                assertTrue(prevSize >= e.getValue().size());
 
                 if(prevSize == e.getValue().size()){
                     if (prevWord == null) prevWord = e.getKey();
